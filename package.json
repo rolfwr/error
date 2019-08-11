@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "version": "0.0.0",
+  "devDependencies": {
+    "@types/node": "^12.6.9",
+    "@types/reveal": "^3.3.33",
+    "node": "^12.7.0",
+    "parcel-bundler": "^1.12.3",
+    "reveal.js": "^3.8.0",
+    "typescript": "^3.5.3"
+  },
+  "scripts": {
+    "serve": "parcel index.html"
+  },
+  "dependencies": {}
+}

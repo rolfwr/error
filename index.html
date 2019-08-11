@@ -1,0 +1,253 @@
+<html>
+<head>
+    <!-- Parcel will inject the CSS modules that we import in index.ts here. -->
+</head>
+<style>
+    .reveal .slides .gray-contrast
+    {
+        color: #ddd;
+        background-color: rgba(48, 48, 48, 0.8);
+        padding: 50px;
+        border-radius: 10px;
+    }
+
+    .reveal .slides .reduced
+    {
+        font-size: 18px;
+        line-height: 1.2em;
+        max-height: none;
+    }
+
+    .reveal .slides table {
+        color: #93a1a1;
+        font-size: 22px;
+    }
+
+    strong {
+        color: white;
+    }
+
+    .fragment.highlight-current-blue.current-fragment strong {
+        color: #1b91ff;
+    }
+
+</style>
+<body>
+    <!--
+        Parcel will recognize this as a TypeScript module, and will transpile
+        it into JavaScript and replace this script tag with a tag that pulls
+        in the bundled JavaScript code.
+    -->
+
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <h1>Context capture, restart points and UX</h1>
+            </section>
+            <section>
+                <h2>A different perspective on error handling</h2>
+                <div style="left: 10px; width: 420px;" class="reduced">
+                    <div style="height: 100px;"></div>
+                    <div class="gray-contrast" style="padding: 30px;">
+                        <img src="assets/chromecube.svg" style="float: left; height: 80px; margin: 0; margin-right: 20px; padding: 0" class="plain">
+                        <h3>Rolf W. Rasmussen</h3>
+                        <p style="margin-bottom: 0;">rolfwr.net</p>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h2>This is not a talk about control flow mechanisms</h2>
+                <p>Too much time has been spent arguing about error return codes vs exceptions already</p>
+            </section>
+            <section>
+                <h2>Nor is it a talk about log file formats and distributed logging protocols</h2>
+                <p>Structured log formats and GELF is pretty neat, but that is beside the point</p>
+            </section>
+            <section>
+                <h2>Nor is it a talk about colors, fonts, layout, spacing and animation</h2>
+                <p>UX ≠ UI + animation</p>
+            </section>
+            <section>
+                <h2>Why do we want to handle errors?</h2>
+                <p>Let's look at a motivating example</p>
+            </section>
+            <section>
+                <h2>What the world needs is a program for calculating remainders</h2>
+                <p>Task: Write a program that reads two integers <var>a</var> and <var>b</var> prints the result of <var>a</var> modulo <var>b</var>.</p>
+            </section>
+            <section>
+                <h2>Easy! I know C++!</h2>
+                <pre><code data-trim>
+#include &lt;iostream&gt;
+
+int main() {
+    int a, b;
+    std::cin >> a;
+    std::cin >> b;
+    int remainder = a % b;
+    std::cout &lt;&lt; remainder &lt;&lt; std::endl;
+}
+                </code></pre>
+<p>What, if anything, is wrong with this code?</p>
+            </section>
+            <section>
+                <h2>See, it works</h2>
+                <img src="assets/itworks.gif">
+            </section>
+            <section>
+                <h2>User testing: The author</h2>
+                <img src="assets/words.gif">
+            </section>
+            <section>
+                <h2>User testing: The astronomer</h2>
+                <img src="assets/toolarge.gif">
+            </section>
+            <section>
+                <h2>User testing: The mathematician</h2>
+                <img src="assets/divzero.gif">
+            </section>
+
+            <section>
+                <h2>Black holes are where God divided by zero.</h2>
+                <p><i>— Steven Wright, comedian</i></p>
+                <br>
+                <p>No, this is not an Einstein quote, despite what you read on the internet.</p>
+            </section>
+            <section>
+                <h2>Platform testing: Amiga</h2>
+                <img src="assets/guru.gif">
+            </section>
+            <section>
+                <h2>The test engineer everyone fears</h2>
+                <img src="assets/lowmem.gif">
+            </section>
+            <section>
+                <h2>Issue triage</h2>
+                <p>How would you deal with these reported issues?</p>
+                <table>
+                    <tbody>
+                        <tr><td class="fragment highlight-current-blue"><strong>Author:</strong> Fails when using Chicago Manual of Style which spells out single digits.</td><td class="fragment"><strong>FR</strong>/<strong>UX</strong>/<strong>CC</strong></td></tr>
+                        <tr><td class="fragment highlight-current-blue"><strong>Astronomer:</strong> Sun to Saturn distrance in meters gives wrong AU remainder</td><td class="fragment"><strong>B</strong>/<strong>UX</strong>/<strong>FR</strong></td></tr>
+                        <tr><td class="fragment highlight-current-blue"><strong>Mathematician:</strong> I need a domain and codomain of ℤ, not <var>significand</var> × 2<sup><var>exponent</var></sup></td><td class="fragment"><strong>UX</strong>/<strong>CC</strong></td></tr>
+                        <tr><td class="fragment highlight-current-blue"><strong>Mathematician:</strong> Sign should be equal to divisor, not dividend. See Mathematica.</td><td class="fragment"><strong>Doc</strong>/<strong>FR</strong></td></tr>
+                        <tr><td class="fragment highlight-current-blue"><strong>Dinosaur:</strong> Sometimes crashes and reboots our salary processing machine</td><td class="fragment"><strong>B</strong>/<strong>RP</strong></td></tr>        
+                        <tr><td class="fragment highlight-current-blue"><strong>Tester:</strong> Inconsistent error messages under low memory conditions</td><td class="fragment"><strong>Doc</strong></td></tr>        
+                        <tr><td class="fragment highlight-current-blue"><strong>Junior dev:</strong> Unable to reproduce reported crash. Can we add logging?</td><td class="fragment"><strong>CC</strong></td></tr>        
+                        <tr><td class="fragment highlight-current-blue"><strong>Trekkie:</strong> The core should only be dumped in the event of a warp core breach</td><td class="fragment"><strong>Joke</strong></td></tr>
+                        <tr><td class="fragment highlight-current-blue"><strong>UI designer:</strong> Technical error messages are confusing and scary. Hide them.</td><td class="fragment"><strong>UX</strong></td></tr>
+                        <tr><td class="fragment highlight-current-blue"><strong>UX designer:</strong> User would benefit from seeing preview of results while he types</td><td class="fragment"><strong>UX</strong>/<strong>RP</strong></tr>
+                    </tbody>
+                </table>
+            </section>
+            <section>
+                <ul>
+                    <li>Make it possible to to figure out how to prevent unexpected errors in the future</li>
+                    <li>Prevent disruption of unrelated activities to the extent it is safe to do so</ul>
+                    <li>Assist the user in continuing their work despite the expected error having occurred</li>
+                </ul>
+            </section>
+            <section>
+                <h2>An unexpected error occurred</h2>
+                <p>Unexpected errors --> Developer troubleshooting</p>
+                <p>Expected errors --> UX</p>
+            </section>
+            <section>
+                <h2>What is the most common root causes of errors?</h2>
+                <p>Resource exhaustion</p>
+                <p>Unexpected input</p>
+                <p>Distributed computing</p>
+            </section>
+            <section>
+                <h2>Running out of resources</h2>
+                <ul>
+                    <li>Memory</li>
+                    <li>File descriptors</li>
+                    <li>Process identifiers</li>
+                    <li>GDI handles</li>
+                    <li>Explicit or implicit throttling</li>                    
+                </ul>
+            </section>
+            <section>
+                <h2>They lossy propagation problem</h2>
+                <p>Context information is frequently lost when propagating the error condition from the lower levels of a system to the higher levels of the system.</p>
+                <ul>
+                    <li>Throwing away information</li>
+                    <li>Not augmenting the error information with context that only intermediate layers know</li>
+                </ul>
+            </section>
+            <section>
+                <h2>What higher level code would like to know</h2>
+                <ul>
+                    <li>Is it worth trying again later?</li>
+                    <li>If so, when?</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Only continue if it is safe to do so</h2>
+                <p>Memory and data corruption side-effects will be very hard to debug, since visible failure most often occur long after the initial error.</p>
+            </section>
+            <section>
+                <h2>In general, don't catch segmentation fault or Access Violation</h2>
+                <p>...unless you're implementing a runtime that translates a subset of these conditions into null-pointer exceptions.</p>                
+            </section>
+            <section>
+                <h2>Circuit breaker pattern</h2>
+            </section>
+            <section>
+                <h2>RPC errors are not rare, but rarely handled</h2>
+            </section>
+            <section>
+                <h2>High-level timeout policy</h2>
+            </section>
+            <section>
+                <h2>High-level retry policy</h2>
+            </section>
+            <section>
+                <h2>Sometimes doing nothing is better than something</h2>
+            </section>
+            <section>
+                <h2>But stack traces and data dumps are ugly</h2>
+                <p>Now we're talking UX</p>
+            </section>
+
+            <section>
+                <h2>UX: What users would like to know</h2>
+                <ul>
+                    <li>Is it worth trying again later?</li>
+                    <li>What is the current state of my work and the operation I tried to do?</li>
+                    <li>What aspect of what I tried to do triggered the problem?</li>
+                    <li>Is there anything I can do to make the problem go away?</li>
+                    <li>If I need a developer to look at the problem, what do I tell them to look for?</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Cop outs</h2>
+                <ul>
+                    <li>Try again later.</li>
+                    <li>Contact your system administrator.</li>
+                </ul>
+                <p>Translation: The UI layer has no idea what happened.</p>
+            </section>
+            <section>
+                <h2>Corralation IDs</h2>
+            </section>
+            <section>
+                <h2>Expected API errors are not application errors</h2>
+                <p>Error: No web page loaded</p>
+                <p>[Screenshot mockup]</p>
+            </section>
+            <section>
+                <h2>Endless sequence of dialog prompts</h2>
+                <p>Yes to all?</p>
+            </section>
+            <section>
+                <h2>Don't ask users to answer questions that they have no basis for answering</h2>
+                <p>Forge ahead making the best of it, or back out and reassess the situation.</p>
+                <p>Summary of the result.</p>
+                <p>The power of a trustworthy "Undo"</p>
+            </section>
+        </div>
+    </div>
+    <script src="./index.ts"></script>
+</body>
+</html>
