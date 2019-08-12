@@ -23,7 +23,7 @@
         font-size: 22px;
     }
 
-    strong {
+    strong, th {
         color: white;
     }
 
@@ -140,6 +140,149 @@ int main() {
                 </table>
             </section>
             <section>
+                <h2>Isolation through restart points</h2>
+                <p>When a failure occurs, abort the directly affected activity, and fall back to a state isolated from the activity in which other activities can continue running.</p>
+            </section>
+            <section>
+                <h2>OS process handling as restart point</h2>
+                <p>Most modern OSes provide process isolation, allowing unaffected processes to continue run and be spawned after other processes terminate due to an error.</p>
+            </section>
+            <section>
+                <h2>Service managers as restart points</h2>
+                <p>Service managers like Linux systemd, macOS launchd, and Windows Service Manager provides the ability to restart service processes if they fail.</p>
+            </section>
+            <section>
+                <h2>Application loops as restart points</h2>
+                <p>If an application performs many independent tasks then it often makes sense to allow unaffected tasks to run to completion even if one of the tasks fail.</p>
+                <ul>
+                    <li>Each incoming request in a server could be considered a separate task.</li>
+                    <li>Each file copy operation in a backup program could be considered a separate task.</li>
+                    <li>Each HTTP GET request in a webcrawler could be considered a separate task.</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Multiple layers of restart points</h2>
+                <p>Imagine a modern HTTP server running as a service</p>
+                <ul>
+                    <li>If the server process fails, then the service manager restarts it</li>
+                    <li>If an accepted network connection fails, the accept loop will continue to accept new connections</li>
+                    <li>If HTTP request handler fails, an error will be send back, and the HTTP protocol parser will continue to process requests on the connection.</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Restart ≠ Unsolicited retry</h2>
+                <p>For low-level code code the most useful behavior is to fail fast error.</p>
+                <p>Only do retries at the outermost context. In interactive applications, the user should be kept in the loop.</p>
+                <p>Implementing retry logic at multiple layers causes unwanted delay amplification.</p>
+            </section>
+            <section>
+                <h2>Don't retry operations encountering permanent errors</h2>
+                <p>Duh.</p>
+            </section>
+            <section>
+                <h2>Context Capture</h2>
+                <p>As you abort an activity and pass the error condition up to outer contexts, don't throw away the the information only known by the inner contexts.</p>
+            </section>
+            <section>
+                <h2>Examples of things to capture</h2>
+                <ul>
+                    <li>The URL of the failed HTTP request</li>
+                    <li>The path of the file that could not be found</li>
+                    <li>The arguments and the mathematical operation that failed due to division by zero</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Context capture layers</h2>
+                <p>Each layer of context may potentially contribute to the description of the error condition, contributing higher level information in the outer layers.</p>
+                <ul>
+                    <li>What API call failed and why it failed.</li>
+                    <li>What calling the API was trying to achieve.</li>
+                    <li>What high level operation or task that was aborted as a result.</li>
+                    <li>How, with what input, and why the high level operation was started in the first place.</li>
+                </ul>
+            </section>
+            <section>
+                <h2>They lossy propagation problem</h2>
+                <p>Context information is frequently lost when propagating the error condition from the lower levels of a system to the higher levels of the system.</p>
+                <ul>
+                    <li>Throwing away information</li>
+                    <li>Not augmenting the error information with context that only intermediate layers know</li>
+                </ul>
+            </section>
+            <section>
+                <h2>I Have No Mouth, and I Must Scream</h2>
+                <p>What do we do when we're forced to implement an interface that does not allow us to report back all the error information that we have?</p>
+                <p><strong>Side channels!</strong></p>
+            </section>
+            <section>
+                <h2>Side channels</h2>
+                <p>Examples of standard side channels:</p>
+                <tbody>
+                    <tr><th>errno</th><td>Posix API</td></tr>
+                    <tr><th>GetLastError()</th><td>Windows Win32 API</td></tr>
+                    <tr><th>Log files</th><td>Common practice</td></tr>
+                    <tr><th>Process dump files</th><td>Common OS mechanism</td></tr>
+                </tbody>
+            </section>
+            <section>
+                <h2>Corralation IDs</h2>
+                <p>A unique identifier given to an ongoing activity that is provided both in main reporting channels and side channels to allow corralation of information passed through each channel.</p>
+                <p>Pass corralation IDs across network boundaries.</p>
+            </section>
+            <section>
+                <h2>UX and DX</h2>
+                <table>
+                    <tbody>
+                        <tr><th>UX</th><td>The <strong>User Experience</strong> of users that just want to get on with his work with as little fuzz as possible experiences when an error occurs.</td></tr>
+                        <tr><th>DX</th><td>The <strong>Developer Experience</strong> of developers that are trying to diagnose and possibly eliminate errors that have been reported.</td></tr>
+                    </tbody>
+                </table>
+                <p>Don't confuse the two. Don't communicate with the user through log files.</p>
+            </section>
+            <section>
+                <h2>UX: What users would like to know</h2>
+                <ul>
+                    <li>Is it worth trying again later?</li>
+                    <li>What is the current state of my work and the operation I tried to do?</li>
+                    <li>What aspect of what I tried to do triggered the problem?</li>
+                    <li>Is there anything I can do to make the problem go away?</li>
+                    <li>If I need a developer to look at the problem, what do I tell them to look for?</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Cop outs</h2>
+                <ul>
+                    <li>Try again later.</li>
+                    <li>Contact your system administrator.</li>
+                </ul>
+                <p>Translation: The UI layer has no idea what happened.</p>
+            </section>
+            <section>
+                <h2>UX is not putting lipstick on a pig</h2>
+                <p>Providing good UX during error conditions most likely will require improving the context capturing.</p>
+            </section>
+            <section>
+                <h2>Actionable conditions</h2>
+                <ul>
+                    <li>If something is missing, guide the user to provide the information</li>
+                    <li>If some input or setting is wrong, guide the user to fix it</li>
+                    <li>If something needs to be installed or upgraded, help the user do so</li>
+                    <li>If the user lacks permission, help the user request permission from the right person</li>                    
+                </ul>
+            </section>
+            <section>
+                <h2>Don't ask users to answer questions that they have no basis for answering</h2>
+                <p>Forge ahead making the best of it, or back out and reassess the situation.</p>
+                <p>Summary of the result.</p>
+                <p>The power of a trustworthy "Undo"</p>
+            </section>
+            <section>
+                <h2>Expected API errors are not application errors</h2>
+                <p>Uninitialized, incomplete or unfinished are common states which users don't consider an error.</p>
+                <p>Imagine if your web browser reported "Error: No page loaded" each time you started it up.</p>
+                <p>[Screenshot mockup]</p>
+            </section>
+            <section>
                 <ul>
                     <li>Make it possible to to figure out how to prevent unexpected errors in the future</li>
                     <li>Prevent disruption of unrelated activities to the extent it is safe to do so</ul>
@@ -165,14 +308,6 @@ int main() {
                     <li>Process identifiers</li>
                     <li>GDI handles</li>
                     <li>Explicit or implicit throttling</li>                    
-                </ul>
-            </section>
-            <section>
-                <h2>They lossy propagation problem</h2>
-                <p>Context information is frequently lost when propagating the error condition from the lower levels of a system to the higher levels of the system.</p>
-                <ul>
-                    <li>Throwing away information</li>
-                    <li>Not augmenting the error information with context that only intermediate layers know</li>
                 </ul>
             </section>
             <section>
@@ -211,40 +346,8 @@ int main() {
             </section>
 
             <section>
-                <h2>UX: What users would like to know</h2>
-                <ul>
-                    <li>Is it worth trying again later?</li>
-                    <li>What is the current state of my work and the operation I tried to do?</li>
-                    <li>What aspect of what I tried to do triggered the problem?</li>
-                    <li>Is there anything I can do to make the problem go away?</li>
-                    <li>If I need a developer to look at the problem, what do I tell them to look for?</li>
-                </ul>
-            </section>
-            <section>
-                <h2>Cop outs</h2>
-                <ul>
-                    <li>Try again later.</li>
-                    <li>Contact your system administrator.</li>
-                </ul>
-                <p>Translation: The UI layer has no idea what happened.</p>
-            </section>
-            <section>
-                <h2>Corralation IDs</h2>
-            </section>
-            <section>
-                <h2>Expected API errors are not application errors</h2>
-                <p>Error: No web page loaded</p>
-                <p>[Screenshot mockup]</p>
-            </section>
-            <section>
                 <h2>Endless sequence of dialog prompts</h2>
                 <p>Yes to all?</p>
-            </section>
-            <section>
-                <h2>Don't ask users to answer questions that they have no basis for answering</h2>
-                <p>Forge ahead making the best of it, or back out and reassess the situation.</p>
-                <p>Summary of the result.</p>
-                <p>The power of a trustworthy "Undo"</p>
             </section>
         </div>
     </div>
