@@ -125,11 +125,19 @@ int main() {
                 <img src="assets/divzero.gif">
             </section>
 
-            <section>
-                <h2>Black holes are where God divided by zero.</h2>
-                <p><i>— Steven Wright, comedian</i></p>
-                <br>
-                <p>No, this is not an Einstein quote, despite what you read on the internet.</p>
+            <section data-background="static/blackhole.jpg" data-background-transition="slide" class="righty">
+                <div>
+                        <h2>Black holes are where God divided by zero</h2>
+                        <p><i>— Steven Wright, comedian</i></p>
+                </div>
+            </section>
+            <section data-background="static/steven-wright.jpg" data-background-transition="slide" class="lefty">
+                <div>
+                        <h4>Black holes are where God divided by zero</h4>
+                        <p><i>— Steven Wright, comedian</i></p>
+                        <br>
+                        <p>No, this is not an Einstein quote, despite what you read on the internet.</p>        
+                </div>
             </section>
             <section>
                 <h2>Platform testing: Amiga</h2>
@@ -171,7 +179,7 @@ int main() {
                         <p>Most modern OSes provide process isolation.</p>
                 </div>
             </section>
-            <section data-background="static/chrome-process-tabs.png" data-background-transition="slide" class="righty">
+            <section data-background="static/chrome-process-tabs.png" data-background-transition="slide" class="lefty">
                 <div>
                     <h2>Use one process browser per tab</h2>
                 </div>
@@ -208,9 +216,12 @@ int main() {
                 <h2>Don't retry operations encountering permanent errors</h2>
                 <p>Duh.</p>
             </section>
-            <section>
-                <h2>Context Capture</h2>
-                <p>As you abort an activity and pass the error condition up to outer contexts, don't throw away the the information only known by the inner contexts.</p>
+            <section data-background="static/capture.jpg" data-background-transition="slide" class="righty">
+                <!-- Photo https://flic.kr/p/61JT75 by Wessex Archaeology -->
+                <div>
+                    <h2>Context Capture</h2>
+                    <p>As you abort an activity and pass the error condition up to outer contexts, don't throw away the the information only known by the inner contexts.</p>
+                </div>
             </section>
             <section>
                 <h2>Examples of things to capture</h2>
@@ -238,10 +249,12 @@ int main() {
                     <li>Not augmenting the error information with context that only intermediate layers know</li>
                 </ul>
             </section>
-            <section>
-                <h2>I Have No Mouth, and I Must Scream</h2>
-                <p>What do we do when we're forced to implement an interface that does not allow us to report back all the error information that we have?</p>
-                <p><strong>Side channels!</strong></p>
+            <section data-background="static/scream.jpg" data-background-transition="slide" class="lefty">
+                <div>
+                    <h3>I Have No Mouth, and I Must Scream</h3>
+                    <p>What do we do when we're forced to implement an interface that does not allow us to report back all the error information that we have?</p>
+                    <p><strong>Side channels!</strong></p>        
+                </div>
             </section>
             <section>
                 <h2>Side channels</h2>
