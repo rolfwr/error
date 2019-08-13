@@ -3,6 +3,24 @@
     <!-- Parcel will inject the CSS modules that we import in index.ts here. -->
 </head>
 <style>
+    .slide-background.lefty .slide-background-content {
+        width: 50%;
+        right: 0;
+    }
+    .reveal .slides section.lefty div {
+        width: 45%;
+        left: 0;
+    }
+    .slide-background.righty .slide-background-content {
+        width: 50%;
+        left: 0;
+    }
+    .reveal .slides section.righty div {
+        position: absolute;
+        width: 45%;
+        right: 0;
+    }
+
     .reveal .slides .gray-contrast
     {
         color: #ddd;
@@ -139,13 +157,24 @@ int main() {
                     </tbody>
                 </table>
             </section>
-            <section>
-                <h2>Isolation through restart points</h2>
-                <p>When a failure occurs, abort the directly affected activity, and fall back to a state isolated from the activity in which other activities can continue running.</p>
+            <section data-background="static/restart.jpg" data-background-transition="slide" class="lefty">
+                <!-- Photo https://flic.kr/p/awFtXT by Andrew Hurley -->
+                <div>
+                    <h2>Isolation through restart points</h2>
+                    <p>When a failure occurs, abort the directly affected activity. Let other isolated activity continue running.</p>
+                </div>
             </section>
-            <section>
-                <h2>OS process handling as restart point</h2>
-                <p>Most modern OSes provide process isolation, allowing unaffected processes to continue run and be spawned after other processes terminate due to an error.</p>
+            <section data-background="static/mmu.jpg" data-background-transition="slide" class="righty">
+                <!-- Photo https://commons.wikimedia.org/wiki/File:MC68451_p1160081.jpg by David Monniaux -->
+                <div>
+                        <h2>OS process scheduler as restart point</h2>
+                        <p>Most modern OSes provide process isolation.</p>
+                </div>
+            </section>
+            <section data-background="static/chrome-process-tabs.png" data-background-transition="slide" class="righty">
+                <div>
+                    <h2>Use one process browser per tab</h2>
+                </div>
             </section>
             <section>
                 <h2>Service managers as restart points</h2>
@@ -173,7 +202,7 @@ int main() {
                 <h2>Restart ≠ Unsolicited retry</h2>
                 <p>For low-level code code the most useful behavior is to fail fast error.</p>
                 <p>Only do retries at the outermost context. In interactive applications, the user should be kept in the loop.</p>
-                <p>Implementing retry logic at multiple layers causes unwanted delay amplification.</p>
+                <p>Implementing retry logic at multiple layers causes unwanted delay amplification and catastrophic cascades.</p>
             </section>
             <section>
                 <h2>Don't retry operations encountering permanent errors</h2>
@@ -283,6 +312,11 @@ int main() {
                 <p>[Screenshot mockup]</p>
             </section>
             <section>
+                <h2>Graceful degrade</h2>
+                <p>Make the best of what you've got.</p>
+                <p>Don't close down the resturant when you run out of parsley</p>
+            </section>
+            <section>
                 <ul>
                     <li>Make it possible to to figure out how to prevent unexpected errors in the future</li>
                     <li>Prevent disruption of unrelated activities to the extent it is safe to do so</ul>
@@ -307,7 +341,7 @@ int main() {
                     <li>File descriptors</li>
                     <li>Process identifiers</li>
                     <li>GDI handles</li>
-                    <li>Explicit or implicit throttling</li>                    
+                    <li>Explicit or implicit throttling</li>
                 </ul>
             </section>
             <section>
