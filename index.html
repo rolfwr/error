@@ -127,13 +127,12 @@ int main() {
 
             <section data-background="static/blackhole.jpg" data-background-transition="slide" class="righty">
                 <div>
-                        <h2>Black holes are where God divided by zero</h2>
-                        <p><i>— Steven Wright, comedian</i></p>
+                        <h2>“Black holes are where God divided by zero”</h2>
                 </div>
             </section>
             <section data-background="static/steven-wright.jpg" data-background-transition="slide" class="lefty">
                 <div>
-                        <h4>Black holes are where God divided by zero</h4>
+                        <h4>“Black holes are where God divided by zero”</h4>
                         <p><i>— Steven Wright, comedian</i></p>
                         <br>
                         <p>No, this is not an Einstein quote, despite what you read on the internet.</p>        
@@ -169,7 +168,7 @@ int main() {
                 <!-- Photo https://flic.kr/p/awFtXT by Andrew Hurley -->
                 <div>
                     <h2>Isolation through restart points</h2>
-                    <p>When a failure occurs, abort the directly affected activity. Let other isolated activity continue running.</p>
+                    <p>When a failure occurs, abort the directly affected activity. Let other isolated activities continue running.</p>
                 </div>
             </section>
             <section data-background="static/mmu.jpg" data-background-transition="slide" class="righty">
@@ -206,6 +205,15 @@ int main() {
                     <li>If HTTP request handler fails, an error will be send back, and the HTTP protocol parser will continue to process requests on the connection.</li>
                 </ul>
             </section>
+            <section data-background="static/ruin.jpg" data-background-transition="slide" class="righty">
+                <div>
+                    <h2>The biggest sin in error handling is corrupting state or result</h2>
+                </div>
+            </section>
+            <section>
+                <h2>If you can't isolate the error, then don't continue</h2>
+                <p>Memory and data corruption side-effects are be very hard to debug when visible failure occur long after the initial error.</p>
+            </section>
             <section>
                 <h2>Restart ≠ Unsolicited retry</h2>
                 <p>For low-level code code the most useful behavior is to fail fast error.</p>
@@ -213,10 +221,24 @@ int main() {
                 <p>Implementing retry logic at multiple layers causes unwanted delay amplification and catastrophic cascades.</p>
             </section>
             <section>
-                <h2>Don't retry operations encountering permanent errors</h2>
+                <h2>Don't retry operations that encounter permanent errors</h2>
                 <p>Duh.</p>
             </section>
-            <section data-background="static/capture.jpg" data-background-transition="slide" class="righty">
+            <section data-background="static/sisyphus.jpg" data-background-transition="slide" class="lefty">
+                <!-- Painting "Sisyphus" by italian painter Titan, 1549 -->
+                <div>
+                    <h3>“Insanity Is Doing the Same Thing Over and Over Again and Expecting Different Results”</h3>
+                </div>
+            </section>
+            <section data-background="static/insanity.png" data-background-transition="slide" class="lefty">
+                <div>
+                    <h4>“Insanity Is Doing the Same Thing Over and Over Again and Expecting Different Results”</h4>
+                    <p><i>— Anonymous Al-Anon attendee<br><small>(probably)</small></i></p>
+                    <br>
+                    <p>Still not an Einstein quote, despite what the internet says.</p>      
+                </div>
+            </section>
+            <section data-background="static/capture.jpg" data-background-transition="slide" class="lefty">
                 <!-- Photo https://flic.kr/p/61JT75 by Wessex Archaeology -->
                 <div>
                     <h2>Context Capture</h2>
@@ -229,6 +251,7 @@ int main() {
                     <li>The URL of the failed HTTP request</li>
                     <li>The path of the file that could not be found</li>
                     <li>The arguments and the mathematical operation that failed due to division by zero</li>
+                    <li>The line in the configuration file whose value did not work</li>
                 </ul>
             </section>
             <section>
@@ -240,6 +263,12 @@ int main() {
                     <li>What high level operation or task that was aborted as a result.</li>
                     <li>How, with what input, and why the high level operation was started in the first place.</li>
                 </ul>
+            </section>
+            <section data-background="static/burning.jpg" data-background-transition="slide" class="lefty">
+                <!-- Photo https://flic.kr/p/8JPGnX by Jason Verwey -->
+                <div>
+                    <h2>The second biggest sin is discarding valuable information</h2>
+                </div>
             </section>
             <section>
                 <h2>They lossy propagation problem</h2>
@@ -259,17 +288,26 @@ int main() {
             <section>
                 <h2>Side channels</h2>
                 <p>Examples of standard side channels:</p>
-                <tbody>
-                    <tr><th>errno</th><td>Posix API</td></tr>
-                    <tr><th>GetLastError()</th><td>Windows Win32 API</td></tr>
-                    <tr><th>Log files</th><td>Common practice</td></tr>
-                    <tr><th>Process dump files</th><td>Common OS mechanism</td></tr>
-                </tbody>
+                <table>
+                    <tbody>
+                        <tr><th>errno</th><td>Posix API</td></tr>
+                        <tr><th>SetLastError()</th><td>Windows Win32 API</td></tr>
+                        <tr><th>Log files</th><td>Common practice</td></tr>
+                        <tr><th>Process dump files</th><td>Common OS mechanism</td></tr>
+                    </tbody>
+                </table>
+                <p>Thread Local Storage is often used to create ad-hoc side-channels.</p>
             </section>
             <section>
                 <h2>Corralation IDs</h2>
                 <p>A unique identifier given to an ongoing activity that is provided both in main reporting channels and side channels to allow corralation of information passed through each channel.</p>
                 <p>Pass corralation IDs across network boundaries.</p>
+            </section>
+            <section data-background="static/error-code.jpg" data-background-transition="slide" class="righty">
+                <div>
+                    <h2>Error codes</h2>
+                    <p>Identifiers you can paste into Google to find other people complaining about the same problem.</p>
+                </div>
             </section>
             <section>
                 <h2>UX and DX</h2>
@@ -299,9 +337,12 @@ int main() {
                 </ul>
                 <p>Translation: The UI layer has no idea what happened.</p>
             </section>
-            <section>
-                <h2>UX is not putting lipstick on a pig</h2>
-                <p>Providing good UX during error conditions most likely will require improving the context capturing.</p>
+            <section data-background="static/lipstick.jpg" data-background-transition="slide" class="lefty">
+                <!-- Photo https://flic.kr/p/F23hKP by fizzybeth -->
+                <div>
+                    <h2>UX is not putting lipstick on a pig</h2>
+                    <p>Good UX requires often improving context capturing.</p>        
+                </div>
             </section>
             <section>
                 <h2>Actionable conditions</h2>
@@ -313,88 +354,40 @@ int main() {
                 </ul>
             </section>
             <section>
-                <h2>Don't ask users to answer questions that they have no basis for answering</h2>
-                <p>Forge ahead making the best of it, or back out and reassess the situation.</p>
-                <p>Summary of the result.</p>
-                <p>The power of a trustworthy "Undo"</p>
-            </section>
-            <section>
                 <h2>Expected API errors are not application errors</h2>
                 <p>Uninitialized, incomplete or unfinished are common states which users don't consider an error.</p>
-                <p>Imagine if your web browser reported "Error: No page loaded" each time you started it up.</p>
-                <p>[Screenshot mockup]</p>
+            </section>
+            <section data-background="static/needless-error.png" data-background-transition="slide">
+            </section>
+            <section data-background="static/workaround.jpg" data-background-transition="slide" class="lefty">
+                <div>
+                    <h3>“A clever person solves a problem. A wise person avoids it.”</h3>
+                </div>
+            </section>
+            <section data-background="static/einstein.jpg" data-background-transition="slide" class="righty">
+                <!-- 
+                    Photo https://commons.wikimedia.org/wiki/File:Albert_Einstein_Head.jpg
+                    from the United States Library of Congress's Prints and
+                    Photographs division, 1947.
+                -->
+                <div>
+                    <h4>“A clever person solves a problem. A wise person avoids it.”</h4>
+                    <p><i>— Anonymous</i></p>
+                    <br>
+                    <br>
+                    <h4>“I never said half the crap people said I did.”</h4>
+                    <p><i>— Albert Einstein</i></p>
+                </div>
+            </section>
+            <section data-background="static/closed.jpg" data-background-transition="slide" class="lefty">
+                <div>
+                    <h2>Graceful degrade</h2>
+                    <p>Make the best of what you've got.</p>
+                    <p>Don't close down the resturant when you run out of parsley</p>
+                </div>
             </section>
             <section>
-                <h2>Graceful degrade</h2>
-                <p>Make the best of what you've got.</p>
-                <p>Don't close down the resturant when you run out of parsley</p>
-            </section>
-            <section>
-                <ul>
-                    <li>Make it possible to to figure out how to prevent unexpected errors in the future</li>
-                    <li>Prevent disruption of unrelated activities to the extent it is safe to do so</ul>
-                    <li>Assist the user in continuing their work despite the expected error having occurred</li>
-                </ul>
-            </section>
-            <section>
-                <h2>An unexpected error occurred</h2>
-                <p>Unexpected errors --> Developer troubleshooting</p>
-                <p>Expected errors --> UX</p>
-            </section>
-            <section>
-                <h2>What is the most common root causes of errors?</h2>
-                <p>Resource exhaustion</p>
-                <p>Unexpected input</p>
-                <p>Distributed computing</p>
-            </section>
-            <section>
-                <h2>Running out of resources</h2>
-                <ul>
-                    <li>Memory</li>
-                    <li>File descriptors</li>
-                    <li>Process identifiers</li>
-                    <li>GDI handles</li>
-                    <li>Explicit or implicit throttling</li>
-                </ul>
-            </section>
-            <section>
-                <h2>What higher level code would like to know</h2>
-                <ul>
-                    <li>Is it worth trying again later?</li>
-                    <li>If so, when?</li>
-                </ul>
-            </section>
-            <section>
-                <h2>Only continue if it is safe to do so</h2>
-                <p>Memory and data corruption side-effects will be very hard to debug, since visible failure most often occur long after the initial error.</p>
-            </section>
-            <section>
-                <h2>In general, don't catch segmentation fault or Access Violation</h2>
-                <p>...unless you're implementing a runtime that translates a subset of these conditions into null-pointer exceptions.</p>                
-            </section>
-            <section>
-                <h2>Circuit breaker pattern</h2>
-            </section>
-            <section>
-                <h2>RPC errors are not rare, but rarely handled</h2>
-            </section>
-            <section>
-                <h2>High-level timeout policy</h2>
-            </section>
-            <section>
-                <h2>High-level retry policy</h2>
-            </section>
-            <section>
-                <h2>Sometimes doing nothing is better than something</h2>
-            </section>
-            <section>
-                <h2>But stack traces and data dumps are ugly</h2>
-                <p>Now we're talking UX</p>
-            </section>
-
-            <section>
-                <h2>Endless sequence of dialog prompts</h2>
-                <p>Yes to all?</p>
+                <h2>Questions?</h2>
             </section>
         </div>
     </div>
