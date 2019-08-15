@@ -11,7 +11,8 @@
     "typescript": "^3.5.3"
   },
   "scripts": {
-    "serve": "cpx static/* dist/static && parcel index.html"
+    "serve": "cpx static/* dist/static && parcel index.html",
+    "build": "cpx static/* dist/static && parcel build index.html"
   },
   "dependencies": {}
 }
