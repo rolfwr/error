@@ -1,57 +1,11 @@
+<!doctype html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Context capture, restart points and UX</title>
     <!-- Parcel will inject the CSS modules that we import in index.ts here. -->
 </head>
-<style>
-    .slide-background.lefty .slide-background-content {
-        width: 50%;
-        right: 0;
-    }
-    .reveal .slides section.lefty div {
-        width: 45%;
-        left: 0;
-    }
-    .slide-background.righty .slide-background-content {
-        width: 50%;
-        left: 0;
-    }
-    .reveal .slides section.righty div {
-        position: absolute;
-        width: 45%;
-        right: 0;
-    }
-
-    .reveal .slides .gray-contrast
-    {
-        color: #ddd;
-        background-color: rgba(48, 48, 48, 0.8);
-        padding: 50px;
-        border-radius: 10px;
-    }
-
-    .reveal .slides .reduced
-    {
-        font-size: 18px;
-        line-height: 1.2em;
-        max-height: none;
-    }
-
-    .reveal .slides table {
-        color: #93a1a1;
-        font-size: 22px;
-    }
-
-    strong, th {
-        color: white;
-    }
-
-    .fragment.highlight-current-blue.current-fragment strong {
-        color: #1b91ff;
-    }
-
-</style>
 <body>
     <!--
         Parcel will recognize this as a TypeScript module, and will transpile
@@ -76,328 +30,353 @@
                 </div>
             </section>
             <section>
-                <h2>This is not a talk about control flow mechanisms</h2>
-                <p>Too much time has been spent arguing about error return codes vs exceptions already</p>
+                <section>
+                    <h2>This is not a talk about control flow mechanisms</h2>
+                    <p>Too much time has been spent arguing about error return codes vs exceptions already</p>
+                </section>
+                <section>
+                    <h2>Nor is it a talk about log file formats and distributed logging protocols</h2>
+                    <p>Structured log formats and GELF is pretty neat, but that is beside the point</p>
+                </section>
+                <section>
+                    <h2>Nor is it a talk about colors, fonts, layout, spacing and animation</h2>
+                    <p>UX ≠ UI + animation</p>
+                </section>    
             </section>
             <section>
-                <h2>Nor is it a talk about log file formats and distributed logging protocols</h2>
-                <p>Structured log formats and GELF is pretty neat, but that is beside the point</p>
-            </section>
-            <section>
-                <h2>Nor is it a talk about colors, fonts, layout, spacing and animation</h2>
-                <p>UX ≠ UI + animation</p>
-            </section>
-            <section>
-                <h2>Why do we want to handle errors?</h2>
-                <p>Let's look at a motivating example</p>
-            </section>
-            <section>
-                <h2>What the world needs is a program for calculating remainders</h2>
-                <p>Task: Write a program that reads two integers <var>a</var> and <var>b</var> prints the result of <var>a</var> modulo <var>b</var>.</p>
-            </section>
-            <section>
-                <h2>Easy! I know C++!</h2>
-                <pre><code data-trim>
-#include &lt;iostream&gt;
+                <section>
+                    <h2>Why do we want to handle errors?</h2>
+                    <p>Let's look at a motivating example</p>
+                </section>
+                <section>
+                    <h2>What the world needs is a program for calculating remainders</h2>
+                    <p>Task: Write a program that reads two integers <var>a</var> and <var>b</var> prints the result of <var>a</var> modulo <var>b</var>.</p>
+                </section>
+                <section>
+                    <h2>Easy! I know C++!</h2>
+                    <pre><code data-trim>
+    #include &lt;iostream&gt;
 
-int main() {
-    int a, b;
-    std::cin >> a;
-    std::cin >> b;
-    int remainder = a % b;
-    std::cout &lt;&lt; remainder &lt;&lt; std::endl;
-}
-                </code></pre>
-<p>What, if anything, is wrong with this code?</p>
+    int main() {
+        int a, b;
+        std::cin &gt;&gt; a;
+        std::cin &gt;&gt; b;
+        int remainder = a % b;
+        std::cout &lt;&lt; remainder &lt;&lt; std::endl;
+    }
+                    </code></pre>
+    <p>What, if anything, is wrong with this code?</p>
+                </section>
+                <section>
+                    <h2>See, it works</h2>
+                    <img src="assets/itworks.gif">
+                </section>
             </section>
             <section>
-                <h2>See, it works</h2>
-                <img src="assets/itworks.gif">
+                <section>
+                    <h2>User testing: The author</h2>
+                    <img src="assets/words.gif">
+                </section>
+                <section>
+                    <h2>User testing: The astronomer</h2>
+                    <img src="assets/toolarge.gif">
+                </section>
+                <section>
+                    <h2>User testing: The mathematician</h2>
+                    <img src="assets/divzero.gif">
+                </section>
+    
+                <section data-background="static/blackhole.jpg" data-background-transition="slide" class="righty">
+                    <div>
+                            <h2>“Black holes are where God divided by zero”</h2>
+                    </div>
+                </section>
+                <section data-background="static/steven-wright.jpg" data-background-transition="slide" class="lefty">
+                    <div>
+                            <h4>“Black holes are where God divided by zero”</h4>
+                            <p><i>— Steven Wright, comedian</i></p>
+                            <br>
+                            <p>No, this is not an Einstein quote, despite what you read on the internet.</p>        
+                    </div>
+                </section>
+                <section>
+                    <h2>Platform testing: Amiga</h2>
+                    <img src="assets/guru.gif">
+                </section>
+                <section>
+                    <h2>The test engineer everyone fears</h2>
+                    <img src="assets/lowmem.gif">
+                </section>
+                <section>
+                    <h2>Issue triage</h2>
+                    <p>How would you deal with these reported issues?</p>
+                    <table>
+                        <tbody>
+                            <tr><td class="fragment highlight-current-blue"><strong>Author:</strong> Fails when using Chicago Manual of Style which spells out single digits.</td><td class="fragment"><strong>FR</strong>/<strong>UX</strong>/<strong>CC</strong></td></tr>
+                            <tr><td class="fragment highlight-current-blue"><strong>Astronomer:</strong> Sun to Saturn distrance in meters gives wrong AU remainder</td><td class="fragment"><strong>B</strong>/<strong>UX</strong>/<strong>FR</strong></td></tr>
+                            <tr><td class="fragment highlight-current-blue"><strong>Mathematician:</strong> I need a domain and codomain of ℤ, not <var>significand</var> × 2<sup><var>exponent</var></sup></td><td class="fragment"><strong>UX</strong>/<strong>CC</strong></td></tr>
+                            <tr><td class="fragment highlight-current-blue"><strong>Mathematician:</strong> Sign should be equal to divisor, not dividend. See Mathematica.</td><td class="fragment"><strong>Doc</strong>/<strong>FR</strong></td></tr>
+                            <tr><td class="fragment highlight-current-blue"><strong>Dinosaur:</strong> Sometimes crashes and reboots our salary processing machine</td><td class="fragment"><strong>B</strong>/<strong>RP</strong></td></tr>        
+                            <tr><td class="fragment highlight-current-blue"><strong>Tester:</strong> Inconsistent error messages under low memory conditions</td><td class="fragment"><strong>Doc</strong></td></tr>        
+                            <tr><td class="fragment highlight-current-blue"><strong>Junior dev:</strong> Unable to reproduce reported crash. Can we add logging?</td><td class="fragment"><strong>CC</strong></td></tr>        
+                            <tr><td class="fragment highlight-current-blue"><strong>Trekkie:</strong> The core should only be dumped in the event of a warp core breach</td><td class="fragment"><strong>Joke</strong></td></tr>
+                            <tr><td class="fragment highlight-current-blue"><strong>UI designer:</strong> Technical error messages are confusing and scary. Hide them.</td><td class="fragment"><strong>UX</strong></td></tr>
+                            <tr><td class="fragment highlight-current-blue"><strong>UX designer:</strong> User would benefit from seeing preview of results while he types</td><td class="fragment"><strong>UX</strong>/<strong>RP</strong></tr>
+                        </tbody>
+                    </table>
+                </section>
             </section>
             <section>
-                <h2>User testing: The author</h2>
-                <img src="assets/words.gif">
+                <section data-background="static/restart.jpg" data-background-transition="slide" class="lefty">
+                    <!-- Photo https://flic.kr/p/awFtXT by Andrew Hurley -->
+                    <div>
+                        <h2>Isolation through restart points</h2>
+                        <p>When a failure occurs, abort the directly affected activity. Let other isolated activities continue running.</p>
+                    </div>
+                </section>
+                <section data-background="static/mmu.jpg" data-background-transition="slide" class="righty">
+                    <!-- Photo https://commons.wikimedia.org/wiki/File:MC68451_p1160081.jpg by David Monniaux -->
+                    <div>
+                            <h2>OS process scheduler as restart point</h2>
+                            <p>Most modern OSes provide process isolation.</p>
+                    </div>
+                </section>
+                <section data-background="static/chrome-process-tabs.png" data-background-transition="slide" class="lefty">
+                    <div>
+                        <h2>Use one process browser per tab</h2>
+                    </div>
+                </section>
+                <section>
+                    <h2>Service managers as restart points</h2>
+                    <p>Service managers like Linux systemd, macOS launchd, and Windows Service Manager provides the ability to restart service processes if they fail.</p>
+                </section>
+                <section>
+                    <h2>Application loops as restart points</h2>
+                    <p>If an application performs many independent tasks then it often makes sense to allow unaffected tasks to run to completion even if one of the tasks fail.</p>
+                    <ul>
+                        <li>Each incoming request in a server could be considered a separate task.</li>
+                        <li>Each file copy operation in a backup program could be considered a separate task.</li>
+                        <li>Each HTTP GET request in a webcrawler could be considered a separate task.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Multiple layers of restart points</h2>
+                    <p>Imagine a modern HTTP server running as a service</p>
+                    <ul>
+                        <li>If the server process fails, then the service manager restarts it</li>
+                        <li>If an accepted network connection fails, the accept loop will continue to accept new connections</li>
+                        <li>If HTTP request handler fails, an error will be send back, and the HTTP protocol parser will continue to process requests on the connection.</li>
+                    </ul>
+                </section>    
             </section>
             <section>
-                <h2>User testing: The astronomer</h2>
-                <img src="assets/toolarge.gif">
+                <section data-background="static/ruin.jpg" data-background-transition="slide" class="righty">
+                    <div>
+                        <h2>The biggest sin in error handling is corrupting state or result</h2>
+                    </div>
+                </section>
+                <section>
+                    <h2>If you can't isolate the error, then don't continue</h2>
+                    <p>Memory and data corruption side-effects are be very hard to debug when visible failure occur long after the initial error.</p>
+                </section>
+                <section>
+                    <h2>Restart ≠ Unsolicited retry</h2>
+                    <p>For low-level code code the most useful behavior is to fail fast error.</p>
+                    <p>Only do retries at the outermost context. In interactive applications, the user should be kept in the loop.</p>
+                    <p>Implementing retry logic at multiple layers causes unwanted delay amplification and catastrophic cascades.</p>
+                </section>    
             </section>
             <section>
-                <h2>User testing: The mathematician</h2>
-                <img src="assets/divzero.gif">
-            </section>
-
-            <section data-background="static/blackhole.jpg" data-background-transition="slide" class="righty">
-                <div>
-                        <h2>“Black holes are where God divided by zero”</h2>
-                </div>
-            </section>
-            <section data-background="static/steven-wright.jpg" data-background-transition="slide" class="lefty">
-                <div>
-                        <h4>“Black holes are where God divided by zero”</h4>
-                        <p><i>— Steven Wright, comedian</i></p>
+                <section>
+                    <h2>Don't retry operations that encounter permanent errors</h2>
+                    <p>Duh.</p>
+                </section>
+                <section data-background="static/sisyphus.jpg" data-background-transition="slide" class="lefty">
+                    <!-- Painting "Sisyphus" by italian painter Titan, 1549 -->
+                    <div>
+                        <h3>“Insanity Is Doing the Same Thing Over and Over Again and Expecting Different Results”</h3>
+                    </div>
+                </section>
+                <section data-background="static/insanity.png" data-background-transition="slide" class="righty">
+                    <div>
+                        <h4>“Insanity Is Doing the Same Thing Over and Over Again and Expecting Different Results”</h4>
+                        <p><i>— Anonymous Al-Anon attendee<br><small>(probably)</small></i></p>
                         <br>
-                        <p>No, this is not an Einstein quote, despite what you read on the internet.</p>        
-                </div>
+                        <p>Still not an Einstein quote, despite what the internet says.</p>      
+                    </div>
+                </section>
             </section>
             <section>
-                <h2>Platform testing: Amiga</h2>
-                <img src="assets/guru.gif">
+                <section data-background="static/capture.jpg" data-background-transition="slide" class="lefty">
+                    <!-- Photo https://flic.kr/p/61JT75 by Wessex Archaeology -->
+                    <div>
+                        <h2>Context Capture</h2>
+                        <p>As you abort an activity and pass the error condition up to outer contexts, don't throw away the the information only known by the inner contexts.</p>
+                    </div>
+                </section>
+                <section>
+                    <h2>Examples of things to capture</h2>
+                    <ul>
+                        <li>The URL of the failed HTTP request</li>
+                        <li>The path of the file that could not be found</li>
+                        <li>The arguments and the mathematical operation that failed due to division by zero</li>
+                        <li>The line in the configuration file whose value did not work</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Context capture layers</h2>
+                    <p>Each layer of context may potentially contribute to the description of the error condition, contributing higher level information in the outer layers.</p>
+                    <ul>
+                        <li>What API call failed and why it failed.</li>
+                        <li>What calling the API was trying to achieve.</li>
+                        <li>What high level operation or task that was aborted as a result.</li>
+                        <li>How, with what input, and why the high level operation was started in the first place.</li>
+                    </ul>
+                </section>    
             </section>
             <section>
-                <h2>The test engineer everyone fears</h2>
-                <img src="assets/lowmem.gif">
+                <section data-background="static/burning.jpg" data-background-transition="slide" class="lefty">
+                    <!-- Photo https://flic.kr/p/8JPGnX by Jason Verwey -->
+                    <div>
+                        <h2>The second biggest sin is discarding valuable information</h2>
+                    </div>
+                </section>
+                <section>
+                    <h2>They lossy propagation problem</h2>
+                    <p>Context information is frequently lost when propagating the error condition from the lower levels of a system to the higher levels of the system.</p>
+                    <ul>
+                        <li>Throwing away information</li>
+                        <li>Not augmenting the error information with context that only intermediate layers know</li>
+                    </ul>
+                </section>
+                <section data-background="static/scream.jpg" data-background-transition="slide" class="lefty">
+                    <div>
+                        <h3>I Have No Mouth, and I Must Scream</h3>
+                        <p>What do we do when we're forced to implement an interface that does not allow us to report back all the error information that we have?</p>
+                        <p><strong>Side channels!</strong></p>        
+                    </div>
+                </section>
+                <section>
+                    <h2>Side channels</h2>
+                    <p>Examples of standard side channels:</p>
+                    <table>
+                        <tbody>
+                            <tr><th>errno</th><td>Posix API</td></tr>
+                            <tr><th>SetLastError()</th><td>Windows Win32 API</td></tr>
+                            <tr><th>Log files</th><td>Common practice</td></tr>
+                            <tr><th>Process dump files</th><td>Common OS mechanism</td></tr>
+                        </tbody>
+                    </table>
+                    <p>Thread Local Storage is often used to create ad-hoc side-channels.</p>
+                </section>
+                <section>
+                    <h2>Corralation IDs</h2>
+                    <p>A unique identifier given to an ongoing activity that is provided both in main reporting channels and side channels to allow corralation of information passed through each channel.</p>
+                    <p>Pass corralation IDs across network boundaries.</p>
+                </section>
+                <section data-background="static/error-code.jpg" data-background-transition="slide" class="righty">
+                    <div>
+                        <h2>Error codes</h2>
+                        <p>Identifiers you can paste into Google to find other people complaining about the same problem.</p>
+                    </div>
+                </section>    
             </section>
             <section>
-                <h2>Issue triage</h2>
-                <p>How would you deal with these reported issues?</p>
-                <table>
-                    <tbody>
-                        <tr><td class="fragment highlight-current-blue"><strong>Author:</strong> Fails when using Chicago Manual of Style which spells out single digits.</td><td class="fragment"><strong>FR</strong>/<strong>UX</strong>/<strong>CC</strong></td></tr>
-                        <tr><td class="fragment highlight-current-blue"><strong>Astronomer:</strong> Sun to Saturn distrance in meters gives wrong AU remainder</td><td class="fragment"><strong>B</strong>/<strong>UX</strong>/<strong>FR</strong></td></tr>
-                        <tr><td class="fragment highlight-current-blue"><strong>Mathematician:</strong> I need a domain and codomain of ℤ, not <var>significand</var> × 2<sup><var>exponent</var></sup></td><td class="fragment"><strong>UX</strong>/<strong>CC</strong></td></tr>
-                        <tr><td class="fragment highlight-current-blue"><strong>Mathematician:</strong> Sign should be equal to divisor, not dividend. See Mathematica.</td><td class="fragment"><strong>Doc</strong>/<strong>FR</strong></td></tr>
-                        <tr><td class="fragment highlight-current-blue"><strong>Dinosaur:</strong> Sometimes crashes and reboots our salary processing machine</td><td class="fragment"><strong>B</strong>/<strong>RP</strong></td></tr>        
-                        <tr><td class="fragment highlight-current-blue"><strong>Tester:</strong> Inconsistent error messages under low memory conditions</td><td class="fragment"><strong>Doc</strong></td></tr>        
-                        <tr><td class="fragment highlight-current-blue"><strong>Junior dev:</strong> Unable to reproduce reported crash. Can we add logging?</td><td class="fragment"><strong>CC</strong></td></tr>        
-                        <tr><td class="fragment highlight-current-blue"><strong>Trekkie:</strong> The core should only be dumped in the event of a warp core breach</td><td class="fragment"><strong>Joke</strong></td></tr>
-                        <tr><td class="fragment highlight-current-blue"><strong>UI designer:</strong> Technical error messages are confusing and scary. Hide them.</td><td class="fragment"><strong>UX</strong></td></tr>
-                        <tr><td class="fragment highlight-current-blue"><strong>UX designer:</strong> User would benefit from seeing preview of results while he types</td><td class="fragment"><strong>UX</strong>/<strong>RP</strong></tr>
-                    </tbody>
-                </table>
-            </section>
-            <section data-background="static/restart.jpg" data-background-transition="slide" class="lefty">
-                <!-- Photo https://flic.kr/p/awFtXT by Andrew Hurley -->
-                <div>
-                    <h2>Isolation through restart points</h2>
-                    <p>When a failure occurs, abort the directly affected activity. Let other isolated activities continue running.</p>
-                </div>
-            </section>
-            <section data-background="static/mmu.jpg" data-background-transition="slide" class="righty">
-                <!-- Photo https://commons.wikimedia.org/wiki/File:MC68451_p1160081.jpg by David Monniaux -->
-                <div>
-                        <h2>OS process scheduler as restart point</h2>
-                        <p>Most modern OSes provide process isolation.</p>
-                </div>
-            </section>
-            <section data-background="static/chrome-process-tabs.png" data-background-transition="slide" class="lefty">
-                <div>
-                    <h2>Use one process browser per tab</h2>
-                </div>
+                <section>
+                    <h2>UX and DX</h2>
+                    <table>
+                        <tbody>
+                            <tr><th>UX</th><td>The <strong>User Experience</strong> of users that just want to get on with his work with as little fuzz as possible experiences when an error occurs.</td></tr>
+                            <tr><th>DX</th><td>The <strong>Developer Experience</strong> of developers that are trying to diagnose and possibly eliminate errors that have been reported.</td></tr>
+                        </tbody>
+                    </table>
+                    <p>Don't confuse the two. Don't communicate with the user through log files.</p>
+                </section>
+                <section>
+                    <h2>UX: What users would like to know</h2>
+                    <ul>
+                        <li>Is it worth trying again later?</li>
+                        <li>What is the current state of my work and the operation I tried to do?</li>
+                        <li>What aspect of what I tried to do triggered the problem?</li>
+                        <li>Is there anything I can do to make the problem go away?</li>
+                        <li>If I need a developer to look at the problem, what do I tell them to look for?</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Cop outs</h2>
+                    <ul>
+                        <li>Try again later.</li>
+                        <li>Contact your system administrator.</li>
+                    </ul>
+                    <p>Translation: The UI layer has no idea what happened.</p>
+                </section>    
             </section>
             <section>
-                <h2>Service managers as restart points</h2>
-                <p>Service managers like Linux systemd, macOS launchd, and Windows Service Manager provides the ability to restart service processes if they fail.</p>
+                <section data-background="static/lipstick.jpg" data-background-transition="slide" class="lefty">
+                    <!-- Photo https://flic.kr/p/F23hKP by fizzybeth -->
+                    <div>
+                        <h2>UX is not putting lipstick on a pig</h2>
+                        <p>Good UX requires often improving context capturing.</p>        
+                    </div>
+                </section>
+                <section>
+                    <h2>Actionable conditions</h2>
+                    <ul>
+                        <li>If something is missing, guide the user to provide the information</li>
+                        <li>If some input or setting is wrong, guide the user to fix it</li>
+                        <li>If something needs to be installed or upgraded, help the user do so</li>
+                        <li>If the user lacks permission, help the user request permission from the right person</li>                    
+                    </ul>
+                </section>    
             </section>
             <section>
-                <h2>Application loops as restart points</h2>
-                <p>If an application performs many independent tasks then it often makes sense to allow unaffected tasks to run to completion even if one of the tasks fail.</p>
-                <ul>
-                    <li>Each incoming request in a server could be considered a separate task.</li>
-                    <li>Each file copy operation in a backup program could be considered a separate task.</li>
-                    <li>Each HTTP GET request in a webcrawler could be considered a separate task.</li>
-                </ul>
-            </section>
-            <section>
-                <h2>Multiple layers of restart points</h2>
-                <p>Imagine a modern HTTP server running as a service</p>
-                <ul>
-                    <li>If the server process fails, then the service manager restarts it</li>
-                    <li>If an accepted network connection fails, the accept loop will continue to accept new connections</li>
-                    <li>If HTTP request handler fails, an error will be send back, and the HTTP protocol parser will continue to process requests on the connection.</li>
-                </ul>
-            </section>
-            <section data-background="static/ruin.jpg" data-background-transition="slide" class="righty">
-                <div>
-                    <h2>The biggest sin in error handling is corrupting state or result</h2>
-                </div>
-            </section>
-            <section>
-                <h2>If you can't isolate the error, then don't continue</h2>
-                <p>Memory and data corruption side-effects are be very hard to debug when visible failure occur long after the initial error.</p>
-            </section>
-            <section>
-                <h2>Restart ≠ Unsolicited retry</h2>
-                <p>For low-level code code the most useful behavior is to fail fast error.</p>
-                <p>Only do retries at the outermost context. In interactive applications, the user should be kept in the loop.</p>
-                <p>Implementing retry logic at multiple layers causes unwanted delay amplification and catastrophic cascades.</p>
-            </section>
-            <section>
-                <h2>Don't retry operations that encounter permanent errors</h2>
-                <p>Duh.</p>
-            </section>
-            <section data-background="static/sisyphus.jpg" data-background-transition="slide" class="lefty">
-                <!-- Painting "Sisyphus" by italian painter Titan, 1549 -->
-                <div>
-                    <h3>“Insanity Is Doing the Same Thing Over and Over Again and Expecting Different Results”</h3>
-                </div>
-            </section>
-            <section data-background="static/insanity.png" data-background-transition="slide" class="lefty">
-                <div>
-                    <h4>“Insanity Is Doing the Same Thing Over and Over Again and Expecting Different Results”</h4>
-                    <p><i>— Anonymous Al-Anon attendee<br><small>(probably)</small></i></p>
-                    <br>
-                    <p>Still not an Einstein quote, despite what the internet says.</p>      
-                </div>
-            </section>
-            <section data-background="static/capture.jpg" data-background-transition="slide" class="lefty">
-                <!-- Photo https://flic.kr/p/61JT75 by Wessex Archaeology -->
-                <div>
-                    <h2>Context Capture</h2>
-                    <p>As you abort an activity and pass the error condition up to outer contexts, don't throw away the the information only known by the inner contexts.</p>
-                </div>
-            </section>
-            <section>
-                <h2>Examples of things to capture</h2>
-                <ul>
-                    <li>The URL of the failed HTTP request</li>
-                    <li>The path of the file that could not be found</li>
-                    <li>The arguments and the mathematical operation that failed due to division by zero</li>
-                    <li>The line in the configuration file whose value did not work</li>
-                </ul>
-            </section>
-            <section>
-                <h2>Context capture layers</h2>
-                <p>Each layer of context may potentially contribute to the description of the error condition, contributing higher level information in the outer layers.</p>
-                <ul>
-                    <li>What API call failed and why it failed.</li>
-                    <li>What calling the API was trying to achieve.</li>
-                    <li>What high level operation or task that was aborted as a result.</li>
-                    <li>How, with what input, and why the high level operation was started in the first place.</li>
-                </ul>
-            </section>
-            <section data-background="static/burning.jpg" data-background-transition="slide" class="lefty">
-                <!-- Photo https://flic.kr/p/8JPGnX by Jason Verwey -->
-                <div>
-                    <h2>The second biggest sin is discarding valuable information</h2>
-                </div>
-            </section>
-            <section>
-                <h2>They lossy propagation problem</h2>
-                <p>Context information is frequently lost when propagating the error condition from the lower levels of a system to the higher levels of the system.</p>
-                <ul>
-                    <li>Throwing away information</li>
-                    <li>Not augmenting the error information with context that only intermediate layers know</li>
-                </ul>
-            </section>
-            <section data-background="static/scream.jpg" data-background-transition="slide" class="lefty">
-                <div>
-                    <h3>I Have No Mouth, and I Must Scream</h3>
-                    <p>What do we do when we're forced to implement an interface that does not allow us to report back all the error information that we have?</p>
-                    <p><strong>Side channels!</strong></p>        
-                </div>
-            </section>
-            <section>
-                <h2>Side channels</h2>
-                <p>Examples of standard side channels:</p>
-                <table>
-                    <tbody>
-                        <tr><th>errno</th><td>Posix API</td></tr>
-                        <tr><th>SetLastError()</th><td>Windows Win32 API</td></tr>
-                        <tr><th>Log files</th><td>Common practice</td></tr>
-                        <tr><th>Process dump files</th><td>Common OS mechanism</td></tr>
-                    </tbody>
-                </table>
-                <p>Thread Local Storage is often used to create ad-hoc side-channels.</p>
-            </section>
-            <section>
-                <h2>Corralation IDs</h2>
-                <p>A unique identifier given to an ongoing activity that is provided both in main reporting channels and side channels to allow corralation of information passed through each channel.</p>
-                <p>Pass corralation IDs across network boundaries.</p>
-            </section>
-            <section data-background="static/error-code.jpg" data-background-transition="slide" class="righty">
-                <div>
-                    <h2>Error codes</h2>
-                    <p>Identifiers you can paste into Google to find other people complaining about the same problem.</p>
-                </div>
-            </section>
-            <section>
-                <h2>UX and DX</h2>
-                <table>
-                    <tbody>
-                        <tr><th>UX</th><td>The <strong>User Experience</strong> of users that just want to get on with his work with as little fuzz as possible experiences when an error occurs.</td></tr>
-                        <tr><th>DX</th><td>The <strong>Developer Experience</strong> of developers that are trying to diagnose and possibly eliminate errors that have been reported.</td></tr>
-                    </tbody>
-                </table>
-                <p>Don't confuse the two. Don't communicate with the user through log files.</p>
-            </section>
-            <section>
-                <h2>UX: What users would like to know</h2>
-                <ul>
-                    <li>Is it worth trying again later?</li>
-                    <li>What is the current state of my work and the operation I tried to do?</li>
-                    <li>What aspect of what I tried to do triggered the problem?</li>
-                    <li>Is there anything I can do to make the problem go away?</li>
-                    <li>If I need a developer to look at the problem, what do I tell them to look for?</li>
-                </ul>
-            </section>
-            <section>
-                <h2>Cop outs</h2>
-                <ul>
-                    <li>Try again later.</li>
-                    <li>Contact your system administrator.</li>
-                </ul>
-                <p>Translation: The UI layer has no idea what happened.</p>
-            </section>
-            <section data-background="static/lipstick.jpg" data-background-transition="slide" class="lefty">
-                <!-- Photo https://flic.kr/p/F23hKP by fizzybeth -->
-                <div>
-                    <h2>UX is not putting lipstick on a pig</h2>
-                    <p>Good UX requires often improving context capturing.</p>        
-                </div>
-            </section>
-            <section>
-                <h2>Actionable conditions</h2>
-                <ul>
-                    <li>If something is missing, guide the user to provide the information</li>
-                    <li>If some input or setting is wrong, guide the user to fix it</li>
-                    <li>If something needs to be installed or upgraded, help the user do so</li>
-                    <li>If the user lacks permission, help the user request permission from the right person</li>                    
-                </ul>
-            </section>
-            <section>
-                <h2>Expected API errors are not application errors</h2>
-                <p>Uninitialized, incomplete or unfinished are common states which users don't consider an error.</p>
-            </section>
-            <section data-background="static/needless-error.png" data-background-transition="slide">
-            </section>
-            <section data-background="static/workaround.jpg" data-background-transition="slide" class="lefty">
-                <div>
-                    <h3>“A clever person solves a problem. A wise person avoids it.”</h3>
-                </div>
-            </section>
-            <section data-background="static/einstein.jpg" data-background-transition="slide" class="righty">
-                <!-- 
-                    Photo https://commons.wikimedia.org/wiki/File:Albert_Einstein_Head.jpg
-                    from the United States Library of Congress's Prints and
-                    Photographs division, 1947.
-                -->
-                <div>
-                    <h4>“A clever person solves a problem. A wise person avoids it.”</h4>
-                    <p><i>— Anonymous</i></p>
-                    <br>
-                    <br>
-                    <h4>“I never said half the crap people said I did.”</h4>
-                    <p><i>— Albert Einstein</i></p>
-                </div>
-            </section>
-            <section data-background="static/closed.jpg" data-background-transition="slide" class="lefty">
-                <div>
-                    <h2>Graceful degrade</h2>
-                    <p>Make the best of what you've got.</p>
-                    <p>Don't close down the resturant when you run out of parsley</p>
-                </div>
+                <section>
+                    <h2>Expected API errors are not application errors</h2>
+                    <p>Uninitialized, incomplete or unfinished are common states which users don't consider an error.</p>
+                </section>
+                <section data-background="static/needless-error.png" data-background-transition="slide">
+                </section>
+                <section data-background="static/workaround.jpg" data-background-transition="slide" class="lefty">
+                    <div>
+                        <h3>“A clever person solves a problem. A wise person avoids it.”</h3>
+                    </div>
+                </section>
+                <section data-background="static/einstein.jpg" data-background-transition="slide" class="righty">
+                    <!-- 
+                        Photo https://commons.wikimedia.org/wiki/File:Albert_Einstein_Head.jpg
+                        from the United States Library of Congress's Prints and
+                        Photographs division, 1947.
+                    -->
+                    <div>
+                        <h4>“A clever person solves a problem. A wise person avoids it.”</h4>
+                        <p><i>— Anonymous</i></p>
+                        <br>
+                        <br>
+                        <h4>“I never said half the crap people said I did.”</h4>
+                        <p><i>— Albert Einstein</i></p>
+                    </div>
+                </section>    
+                <section data-background="static/closed.jpg" data-background-transition="slide" class="lefty">
+                    <div>
+                        <h2>Graceful degrade</h2>
+                        <p>Make the best of what you've got.</p>
+                        <p>Don't close down the restaurant when you run out of parsley</p>
+                    </div>
+                </section>
             </section>
             <section>
                 <h2>Questions?</h2>
             </section>
             <section>
-                <h2>Bonus topics...</h2>
-            </section>
-            <section>
-                <h2>API contracts</h2>
-                <h2>Context Capture behavior effectively becomes part of the API as soon as outer layers start depending on it.</h2>
-            <section data-background="static/live-edit.gif" data-background-transition="slide">
+                <section>
+                    <h2>Bonus slides...</h2>
+                </section>
+                <section>
+                    <h2>API contracts</h2>
+                    <p>Context Capture behavior effectively becomes part of the API as soon as outer layers start depending on it.</p>
+                </section>
+                <section data-background="static/live-edit.gif" data-background-transition="slide">
+                </section>    
             </section>
         </div>
     </div>

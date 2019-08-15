@@ -1,0 +1,45 @@
+.slide-background.lefty .slide-background-content {
+    width: 50%;
+    right: 0;
+}
+.reveal .slides section.lefty div {
+    width: 45%;
+    left: 0;
+}
+.slide-background.righty .slide-background-content {
+    width: 50%;
+    left: 0;
+}
+.reveal .slides section.righty div {
+    position: absolute;
+    width: 45%;
+    right: 0;
+}
+
+.reveal .slides .gray-contrast
+{
+    color: #ddd;
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 50px;
+    border-radius: 10px;
+}
+
+.reveal .slides .reduced
+{
+    font-size: 18px;
+    line-height: 1.2em;
+    max-height: none;
+}
+
+.reveal .slides table {
+    color: #93a1a1;
+    font-size: 22px;
+}
+
+strong, th {
+    color: white;
+}
+
+.fragment.highlight-current-blue.current-fragment strong {
+    color: #1b91ff;
+}

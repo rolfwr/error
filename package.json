@@ -1,6 +1,7 @@
 {
   "private": true,
   "version": "0.0.0",
+  "name": "error-handling",
   "devDependencies": {
     "@types/node": "^12.6.9",
     "@types/reveal": "^3.3.33",
@@ -11,8 +12,10 @@
     "typescript": "^3.5.3"
   },
   "scripts": {
-    "serve": "cpx static/* dist/static && parcel index.html",
-    "build": "cpx static/* dist/static && parcel build index.html"
+    "serve": "cpx static/* dist/static && cpx node_modules/reveal.js/plugin/highlight/highlight.js dist/ && parcel index.html",
+    "build": "cpx static/* dist/static && cpx node_modules/reveal.js/plugin/highlight/highlight.js dist/ && parcel build index.html --public-url ./"
   },
-  "dependencies": {}
+  "dependencies": {
+    "style.css": "^1.0.0"
+  }
 }
