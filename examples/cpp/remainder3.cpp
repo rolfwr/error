@@ -10,6 +10,13 @@ struct parser_state {
     size_t pos;
 };
 
+struct parse_error : public std::runtime_error {
+    parser_state state;
+    parse_error(const char* what, const parser_state& error_state)
+        : std::runtime_error(what), state(error_state) {
+    }
+};
+
 void skip_whitespace(parser_state& state) {
     while (state.pos < state.line.size() && state.line[state.pos] == ' ') {
         ++state.pos;
@@ -36,12 +43,6 @@ std::optional<int> parse_digit(parser_state& state) {
 
     return std::nullopt;
 }
-
-struct parse_error : public std::runtime_error {
-    parser_state state;
-    parse_error(const char* what, const parser_state& error_state) : std::runtime_error(what), state(error_state) {
-    }
-};
 
 int parse_int(parser_state& state) {
     skip_whitespace(state);
@@ -87,17 +88,23 @@ int acquire_int() {
     while (true) {
         try {
             return request_int();
-        } catch (parse_error err) {
+        } catch (const parse_error& err) {
             print_error(err.what(), err.state);
         }
 
-        std::cout << "Try entering an integer value again." << std::endl;
+        std::cout << "Try entering an integer value again, or type Ctrl-C to exit." <<
+            std::endl;
     }
 }
 
 int main() {
     int a = acquire_int();
     int b = acquire_int();
-    int remainder = a % b;
-    std::cout << remainder << std::endl;
-}
+    if (b == 0) {
+        std::cout << "Remainder undefined when dividing by "
+            "zero." << std::endl;
+    } else {
+        int remainder = a % b;
+        std::cout << remainder << std::endl;
+    }
+}         

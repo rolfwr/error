@@ -7,13 +7,13 @@
     "@types/reveal": "^3.3.33",
     "cpx": "^1.5.0",
     "node": "^12.7.0",
-    "parcel-bundler": "^1.12.3",
+    "parcel-bundler": "^1.12.4",
     "reveal.js": "^3.8.0",
     "typescript": "^3.5.3"
   },
   "scripts": {
-    "serve": "cpx static/* dist/static && cpx node_modules/reveal.js/plugin/highlight/highlight.js dist/ && parcel index.html",
-    "build": "cpx static/* dist/static && cpx node_modules/reveal.js/plugin/highlight/highlight.js dist/ && parcel build index.html --public-url ./"
+    "serve": "cpx \"static/*\" dist/static && cpx node_modules/reveal.js/plugin/highlight/highlight.js dist/ && parcel index.html",
+    "build": "cpx \"static/*\" dist/static && cpx node_modules/reveal.js/plugin/highlight/highlight.js dist/ && parcel build index.html --public-url ./"
   },
   "dependencies": {
     "style.css": "^1.0.0"

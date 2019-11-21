@@ -160,6 +160,41 @@
                     </ul>
                 </section>
                 <section>
+                    <h2>Restarting integer acquisition</h2>
+                    <pre><code data-trim>
+int acquire_int() {
+    while (true) {
+        try {
+            return request_int();
+        } catch (const parse_error& err) {
+            print_error(err.what(), err.state);
+        }
+
+        std::cout << "Try entering an integer value again." <<
+            std::endl;
+    }
+}                        
+                    </code></pre>
+                </section>
+                <section>
+                    <h2>Modified main function</h2>
+                    <pre><code data-trim>
+int main() {
+    int a = acquire_int();
+    int b = acquire_int();
+    if (b == 0) {
+        std::cout << "Remainder undefined when dividing by "
+            "zero." << std::endl;
+    } else {
+        int remainder = a % b;
+        std::cout << remainder << std::endl;
+    }
+}              
+                    </code></pre>
+                </section>
+
+
+                <section>
                     <h2>Multiple layers of restart points</h2>
                     <p>Imagine a modern HTTP server running as a service</p>
                     <ul>
@@ -181,7 +216,7 @@
                 </section>
                 <section>
                     <h2>Restart ≠ Unsolicited retry</h2>
-                    <p>For low-level code code the most useful behavior is to fail fast error.</p>
+                    <p>For low-level code code the most useful behavior is to fail fast on error.</p>
                     <p>Only do retries at the outermost context. In interactive applications, the user should be kept in the loop.</p>
                     <p>Implementing retry logic at multiple layers causes unwanted delay amplification and catastrophic cascades.</p>
                 </section>    
@@ -249,6 +284,59 @@
                         <li>Not augmenting the error information with context that only intermediate layers know</li>
                     </ul>
                 </section>
+                <section>
+                    <h3>Capturing integer parsing errors</h3>
+                    <pre class="stretch small"><code data-trim class="cpp">
+int parse_int(parser_state& state) {
+    skip_whitespace(state);
+    int sign = parse_optional_sign(state);
+    auto digit = parse_digit(state);
+    if (!digit) {
+        throw parse_error("Expected integer digit.", state);
+    }
+
+    int value = 0;
+    do {
+        value = value * 10 + sign * digit.value();
+        if (value != 0 && ((value &lt; 0) != (sign &lt; 0))) {
+            std::ostringstream oss;
+            oss &lt;&lt; "Only integers between " &lt;&lt; std::numeric_limits&lt;int>::min() &lt;&lt;
+                " and " &lt;&lt; std::numeric_limits&lt;int>::max() &lt;&lt; " are supported.";
+            throw parse_error(oss.str().c_str(), state);
+        }
+
+        digit = parse_digit(state);
+        skip_whitespace(state);
+    } while (digit);
+
+    if (state.pos != state.line.size()) {
+        throw parse_error("Unexpected character.", state);
+    }
+
+    return value;
+}                                        
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3>Captured context data</h3>
+                    <pre><code data-trim class="cpp">
+struct parser_state {
+    std::string line;
+    size_t pos;
+};
+
+struct parse_error : public std::runtime_error {
+    parser_state state;
+    parse_error(const char* what,
+        const parser_state& error_state)
+        : std::runtime_error(what), state(error_state)
+    {
+    }
+};
+                    </code></pre>
+                </section>
+
                 <section data-background="static/scream.jpg" data-background-transition="slide" class="lefty">
                     <div>
                         <h3>I Have No Mouth, and I Must Scream</h3>
@@ -329,6 +417,26 @@
                     </ul>
                 </section>    
             </section>
+
+            <section>
+                <h2>Explaining problems to the user</h2>
+                <pre><code class="cpp" data-trim>
+void print_error(const std::string& message,
+    const parser_state& state)
+{
+    std::cerr << message << std::endl;
+    std::cerr << "    " << state.line << std::endl;
+    std::cerr << std::string(4 + state.pos, ' ') << "^" <<
+        std::endl;
+}                                      
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>User testing</h2>
+                <img src="assets/handled.gif">
+            </section>
+
             <section>
                 <section>
                     <h2>Expected API errors are not application errors</h2>
@@ -372,11 +480,63 @@
                     <h2>Bonus slides...</h2>
                 </section>
                 <section>
+                    <h2>Parsing helpers</h2>
+                    <pre><code class="stretch small cpp" data-trim>
+void skip_whitespace(parser_state& state) {
+    while (state.pos &lt; state.line.size() && state.line[state.pos] == ' ') {
+        ++state.pos;
+    }
+}
+
+int parse_optional_sign(parser_state& state) {
+    if (state.pos &lt; state.line.size() && state.line[state.pos] == '-') {
+        ++state.pos;
+        return -1;
+    }
+
+    return 1;
+}
+
+std::optional&lt;int> parse_digit(parser_state& state) {
+    if (state.pos &lt; state.line.size()) {
+        char c = state.line[state.pos];
+        if (c >= '0' && c &lt;= '9') {
+            ++state.pos;
+            return c - '0';
+        }
+    }
+
+    return std::nullopt;
+}                        
+                    </code></pre>
+                </section>
+ 
+                <section>
+                    <h2>The remaining code</h2>
+                    <pre><code class="small cpp" data-trim>
+#include &lt;iostream>
+#include &lt;ostream>
+#include &lt;limits>
+#include &lt;string>
+#include &lt;optional>
+#include &lt;sstream>
+                    </code></pre>
+                    <pre><code class="small cpp" data-trim>
+int request_int() {
+    parser_state state {};
+    std::getline(std::cin, state.line);
+    return parse_int(state);
+}
+                    </code></pre>
+                </section>
+ 
+
+                <section>
                     <h2>API contracts</h2>
                     <p>Context Capture behavior effectively becomes part of the API as soon as outer layers start depending on it.</p>
                 </section>
                 <section data-background="static/live-edit.gif" data-background-transition="slide">
-                </section>    
+            </section>    
             </section>
         </div>
     </div>

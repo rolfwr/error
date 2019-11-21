@@ -31,6 +31,14 @@
     max-height: none;
 }
 
+.reveal .slides .small
+{
+    font-size: 18px;
+    line-height: 1.0em;
+    max-height: none;
+}
+
+
 .reveal .slides table {
     color: #93a1a1;
     font-size: 22px;
